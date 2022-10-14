@@ -21,7 +21,7 @@ const Login = () => {
 			<label htmlFor="password"><span>Password</span>
 				<input type="password" name="password" value={password} id="password" onChange={(e) => setPassword(e.target.value)} />
 			</label>
-			<button className="btn" disabled={loading}>Login</button>
+			<button className="btn" disabled={loading}>{loading? "loading": "Login"}</button>
 			{error && <p className={styles.error}>{error}</p>}
 		</form>
 	);
