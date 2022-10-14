@@ -1,15 +1,18 @@
 import React, {useState} from "react";
 import style from "./signup.module.css";
-
+import { useSignup } from "../../hooks/useSignup";
+import { LineWave } from "react-loader-spinner";
 const Signup = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [username, setUsername] = useState("");
-
-	const handleRegister = (e) => {
+	const { error, loading, signup} = useSignup();
+	const handleRegister = async (e) => {
 		e.preventDefault();
 		console.log(email, password, confirmPassword, username);
+		const response  = await signup(email, password, username);
+		console.log(response);
 	};
 	return (
 		<form onSubmit={handleRegister} className={style["signup-form"]}>
@@ -53,7 +56,10 @@ const Signup = () => {
 					onChange={(e) => setConfirmPassword(e.target.value)}
 				/>
 			</label>
-			<button className="btn">Register</button>
+			{error && <p className={style.error}>{error}</p>}
+			{!loading ? <button className="btn" type="submit" disabled={loading}>Signup</button> :
+				<LineWave />
+			}
 		</form>
 	);
 };

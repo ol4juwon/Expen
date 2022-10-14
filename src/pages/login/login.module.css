@@ -19,3 +19,9 @@
     color: #777;
     width: 100%;
 }
+.error{
+    color: red;
+    font-size: 0.8em;
+    margin: 0;
+    padding: 0;
+}
