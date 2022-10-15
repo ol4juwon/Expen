@@ -30,6 +30,13 @@ const firestoreReducer = (state, action) => {
 			error: null,
 			success: true,
 		};
+	case "DEL_DOCUMENT_SUCCESS":
+		return {
+			document: action.payload,
+			loading: false,
+			error: null,
+			success: true,
+		};
 	case "ERROR":
 		return {
 			document: null,
@@ -72,14 +79,16 @@ export const useFirestore = (collection) => {
 	};
 
 	const delDocument = async (id) => {
-		dispatch({ type: "DEL_DOCUMENT" });
+		dispatch({ type: "IS_LOADING" });
 		try {
-			await ref.doc(id).delete();
+			const docf = await ref.doc(id).delete();
+			console.log("ref",docf);
 			if(!isCancelled){
-				dispatch({ type: "DEL_DOCUMENT_SUCCESS" });
+				dispatch({ type: "DEL_DOCUMENT_SUCCESS", payload: docf });
 			}
 		} catch (error) {
-			dispatch({ type: "DEL_DOCUMENT_ERROR", payload: error });
+			console.log("error",error);
+			dispatch({ type: "ERROR", payload: error });
 		}
 	};
 	useEffect(() => {
