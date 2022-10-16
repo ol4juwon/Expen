@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
-import { projectAuth } from "../provider/firebase";
-import { useAuthContext } from "./useAuthContext";
+import { auth } from "../provider/config";
+import { signOut } from "firebase/auth";
+// import { useAuthContext } from "./useAuthContext";
 export const useLogout = () => {
 	const [isCancelled, setIsCancelled] = useState(false);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const { dispatch } = useAuthContext();
+	// const { dispatch } = useAuthContext();
 
 	const logout = async () => {
 		setError(null);
 		setLoading(true);
 
 		try {
-			await projectAuth.signOut();
-			dispatch({ type: "LOGOUT" });
+			signOut(auth).then(() => {
+				// Sign-out successful.
+				console.log("Sign-out successful.");
+			}).catch((error) => {
+				// An error happened.
+				console.log("An error happened.", error);
+			});
+
+			// dispatch({ type: "LOGOUT" });
 			if(!isCancelled) {
 				setLoading(false);
 				setError(null);
