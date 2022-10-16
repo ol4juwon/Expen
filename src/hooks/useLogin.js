@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { auth } from "../provider/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
-// import { useAuthContext } from "./useAuthContext";
+import { useAuthContext } from "./useAuthContext";
 export const useLogin = () => {
 	const [isCancelled, setIsCancelled] = useState(false);
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
-	// const { dispatch } = useAuthContext();
+	const { dispatch } = useAuthContext();
 
 	const login = async (email, password) => {
 		setError(null);
@@ -18,12 +18,14 @@ export const useLogin = () => {
 
 					// Signed in
 					const user = userCredential.user;
+					dispatch({ type: "LOGIN", payload: user });
 					console.log(user);
 				// ...
 				})
 				.catch((error) => {
 					const errorCode = error.code;
 					const errorMessage = error.message;
+					dispatch({ type: "LOGOUT" });
 					setError({errorMessage, errorCode});
 					// ..
 				});
