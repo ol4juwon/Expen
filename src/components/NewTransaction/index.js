@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useFirestore } from "../../hooks/useFirestore";
+import React, { useState } from "react";
+import { db } from "../../provider/config";
+import { collection, addDoc } from "firebase/firestore";
 // eslint-disable-next-line react/prop-types
 const NewTransaction = ({uid}) => {
 	const [name, setName] = useState("");
 	const [amount, setAmount] = useState(0);
-	const { addDocument , response} = useFirestore("transactions");
-	const handleAdd = (e) => {
+	// const { addDocument , response} = useFirestore("transactions");
+	const handleAdd = async (e) => {
 		e.preventDefault();
 		console.log(name, amount, uid);
 	
-		addDocument({ name, amount, uid });
+		const docRef = collection(db, "transactions");
+		await addDoc(docRef, {name, amount, uid});
 	};
 
-	useEffect(() => {
-		if(response.success){
-			setAmount(0);
-			setName("");
-		}
-	}, [response.success]);
 
 	return (
 		<>

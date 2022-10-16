@@ -1,15 +1,17 @@
-import React, {  } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import React from "react";
+// import { useAuthContext } from "../../hooks/useAuthContext";
 import NewTransaction from "../../components/NewTransaction";
 import styles from  "./home.module.css";
-import { useCollection } from "../../hooks/useCollection";
+// import { useCollection } from "../../hooks/useCollection";
 import TransactionList from "../../components/TransactionList";
 import { LineWave } from "react-loader-spinner";
+import { useCollection } from "../../hooks/useCollection";
 const Home = () => {
-	const {user} = useAuthContext();
-	const { documents, error } = useCollection("transactions", ["uid", "==", user.uid], ["createdAt", "desc"]);
+	// const {user} = useAuthContext();
+	const { documents, error } = useCollection("transactions", null, null);
 
 	// console.log(getDocument().then((res) => console.log(res)).catch());
+
 
 	return (
 		<div className={styles.container}>
@@ -21,7 +23,7 @@ const Home = () => {
 				}
 			</div>
 			<div className={styles.sidebar}>
-				<NewTransaction uid={user.uid} />
+				<NewTransaction uid={"ola"} />
 			</div>
 		</div>
 	);

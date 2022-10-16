@@ -1,5 +1,6 @@
 import { useReducer, useEffect, useState } from "react";
-import { projectStore, timestamp } from "../provider/firebase";
+import { db } from "../provider/config";
+import { collection, doc, addDoc, deleteDoc, serverTimestamp as timestamp } from "firebase/firestore";
 let initialState = {
 	document: null,
 	loading: false,
@@ -48,10 +49,10 @@ const firestoreReducer = (state, action) => {
 		return state;
 	}
 };
-export const useFirestore = (collection) => {
+export const useFirestore = (c) => {
 	const [response, dispatch] = useReducer(firestoreReducer, initialState);
 	const [isCancelled, setIsCancelled] = useState(false);
-	const ref = projectStore.collection(collection);
+	// const ref = projectStore.collection(collection);
 	const DNotCancelled = (action) => {
 		if(!isCancelled){
 			dispatch(action);
@@ -61,30 +62,34 @@ export const useFirestore = (collection) => {
 		dispatch({ type: "IS_LOADING" });
 		try {
 			const createdAt = timestamp.fromDate(new Date());
-			const docRef = await ref.add({...data, createdAt});
+
+			const docRef = collection(db, c);
+			await addDoc(docRef, {...data, createdAt});
+			// const docRef = await ref.add({...data, createdAt});
 			DNotCancelled({ type: "ADD_DOCUMENT", payload: docRef });
 		} catch (error) {
 			DNotCancelled({ type: "ERROR", payload: error });
 		}
 	};
-	const getDocument = async () => {
-		dispatch({ type: "IS_LOADING" });
-		try {
-			const docRef = await ref.doc();
-			console.log("re",docRef);
-			DNotCancelled({ type: "GET_DOCUMENT", payload: docRef });
-		} catch (error) {
-			DNotCancelled({ type: "ERROR", payload: error });
-		}
-	};
+	// const getDocument = async () => {
+	// 	dispatch({ type: "IS_LOADING" });
+	// 	try {
+	// 		const docRef = collection(db, "transactions");
+	// 		await deleteDoc(docRef, {id});
+	// 		DNotCancelled({ type: "GET_DOCUMENT", payload: docRef });
+	// 	} catch (error) {
+	// 		DNotCancelled({ type: "ERROR", payload: error });
+	// 	}
+	// };
 
 	const delDocument = async (id) => {
 		dispatch({ type: "IS_LOADING" });
+		console.log(id, typeof deleteDoc);
 		try {
-			const docf = await ref.doc(id).delete();
-			console.log("ref",docf);
+			const docRef = doc(db, c, id);
+			await deleteDoc(docRef);
 			if(!isCancelled){
-				dispatch({ type: "DEL_DOCUMENT_SUCCESS", payload: docf });
+				dispatch({ type: "DEL_DOCUMENT_SUCCESS"});
 			}
 		} catch (error) {
 			console.log("error",error);
@@ -95,5 +100,5 @@ export const useFirestore = (collection) => {
 		return () => setIsCancelled(true);
 	}, []);
 
-	return { addDocument, delDocument, getDocument, response };
+	return { addDocument, delDocument, response };
 };
