@@ -18,7 +18,7 @@ const Navbar = () => {
 					</>
 				)}{user && (
 					<>
-						<li className="">Hello, {user.displayName}</li>
+						<li className="">Hello, {user?.displayName || "user"}</li>
 						<li>
 							<button className="btn" onClick={logout}>Logout</button>
 						</li>
