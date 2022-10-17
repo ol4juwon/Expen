@@ -11,7 +11,9 @@ const TransactionList = ({trnx}) => {
 				<li key={trnx.id}>
 					<p className={styles.name}>{trnx.name}</p> 
 					<p className={styles.amount}>${trnx.amount}</p>
-					<button onClick={() => delDocument(trnx.id)}>X</button>
+					<button onClick={(e) =>{ 
+						e.preventDefault();
+						delDocument(trnx.id);}}>X</button>
 				</li>
 			))}
 		</ul>

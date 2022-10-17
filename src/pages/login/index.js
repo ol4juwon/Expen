@@ -22,7 +22,7 @@ const Login = () => {
 				<input type="password" name="password" value={password} id="password" onChange={(e) => setPassword(e.target.value)} />
 			</label>
 			<button className="btn" disabled={loading}>{loading? "loading": "Login"}</button>
-			{error && <p className={styles.error}>{error}</p>}
+			{error && <p className={styles.error}>{error.errorMessage}</p>}
 		</form>
 	);
 };

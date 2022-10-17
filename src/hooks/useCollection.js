@@ -1,37 +1,46 @@
 import { useEffect, useRef, useState } from "react";
-import { projectStore } from "../provider/firebase";
-export const useCollection = (collection, _query, _orderBy) => {
-	const [documents, setDocuments] = useState(null);
+import { db } from "../provider/config";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+export const useCollection = (c, _query, _orderBy) => {
 	const [error, setError] = useState(null);
+	const [documents, setDocuments] = useState(null);
 	const [loading, setLoading] = useState(false);
-	const query = useRef(_query).current;
-	const orderBy = useRef(_orderBy).current;
+	let q;
+	let o;
+	if(_query)
+		q = useRef(_query).current;
+	if(_orderBy)
+		o = useRef(_orderBy).current;
+
 	useEffect(() => {
 		setLoading(true);
-		let ref = projectStore.collection(collection);
-		if(query){
-			ref = ref.where(...query);
-		}
-		if(orderBy){
-			ref = ref.orderBy(...orderBy);
-		}
-		let unsubscribe = ref.onSnapshot((snap) => {
-			let documents = [];
-			snap.forEach(doc => {
-				documents.push({...doc.data(), id: doc.id});
+		try{
+			let ref = collection(db, c);
+			console.log(typeof where, typeof query, );
+			if(q){
+				console.log("q", q);
+				ref = query(ref, where(...q));}
+			// if(o.current)
+			// 	ref = query(ref, orderBy(o.current.field, o.current.direction , limit(10)));
+			const unsubscribe = onSnapshot(ref, (snapshot) => {
+				let docs = [];
+				snapshot.forEach((doc) => {
+					docs.push({ id: doc.id, ...doc.data() });
+				});
+				setDocuments(docs);
+				setLoading(false);
+				setError(null);
 			});
-			setDocuments(documents);
-			setError(null);
+			return () => {
+				unsubscribe();
+			};
+		}catch(e){
+			console.log(e);
+			setError(e);
+			setLoading(false);
 		}
-		, (err) => {
-			setError(err);
-			console.log(err);
-		}
-		);
 		setLoading(false);
-		return () => unsubscribe();
-	}, [collection, query, orderBy]);
-
+	}, [c,q,o]);
 
 	return { documents, error, loading };
 };

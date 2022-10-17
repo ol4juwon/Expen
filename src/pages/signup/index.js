@@ -11,7 +11,7 @@ const Signup = () => {
 	const handleRegister = async (e) => {
 		e.preventDefault();
 		console.log(email, password, confirmPassword, username);
-		const response  = await signup(email, password, username);
+		const response  =  signup(email, password, username);
 		console.log(response);
 	};
 	return (
@@ -56,7 +56,7 @@ const Signup = () => {
 					onChange={(e) => setConfirmPassword(e.target.value)}
 				/>
 			</label>
-			{error && <p className={style.error}>{error}</p>}
+			{error && <p className={style.error}>{error?.errorMessage}</p>}
 			{!loading ? <button className="btn" type="submit" disabled={loading}>Signup</button> :
 				<LineWave />
 			}
